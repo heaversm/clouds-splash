@@ -35,12 +35,21 @@
         scene.add( controls.getObject() );
 
         /* FLOOR */
+
+        var floorTexture = THREE.ImageUtils.loadTexture( 'images/dot-repeated.jpg' );
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set( 1, 1 );
+        var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide  } );
+
         var floor = new THREE.Mesh(
-            new THREE.CubeGeometry( 2000, 2000, 20,4, 4 ),
-            new THREE.MeshLambertMaterial({color: 0x161616})
+            //new THREE.CubeGeometry( 2000, 2000, 20,16, 16 ),
+            //new THREE.MeshLambertMaterial({color: 0x161616})
+            new THREE.PlaneGeometry( 2000, 2000,8, 8 ),
+            floorMaterial
         );
+
         floor.rotation.x = -90;
-        floor.position.y = -20;
+        floor.position.y = -200;
         scene.add(floor);
 
         /* TEXT */
@@ -70,7 +79,7 @@
         //renderer = new THREE.CanvasRenderer();
         renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.domElement.style.backgroundColor = '#212121';
+        renderer.domElement.style.backgroundColor = '#000000';
 
         document.body.appendChild( renderer.domElement );
 

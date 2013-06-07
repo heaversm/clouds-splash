@@ -19,6 +19,9 @@ THREE.PointerLockControls = function ( camera ) {
   var moveBackward = false;
   var moveLeft = false;
   var moveRight = false;
+  var craneUp = false;
+  var craneDown = false;
+  var pitchX = true;
 
   var velocity = new THREE.Vector3();
 
@@ -31,11 +34,15 @@ THREE.PointerLockControls = function ( camera ) {
     var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-    yawObject.rotation.y -= movementX * 0.002;
+    /*yawObject.rotation.y -= movementX * 0.002;
+
+    if (pitchObject.rotation.x < -.5 && pitchObject.rotation.y < -1){
+      pitchObject.rotation.x -= movementY * 0.002;
+      pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+    }*/
 
     /* MH Find out how to set bounds here - should be between around -.5 & -1 x rotation */
-    pitchObject.rotation.x -= movementY * 0.002;
-    pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+
 
   };
 
@@ -62,6 +69,13 @@ THREE.PointerLockControls = function ( camera ) {
         moveRight = true;
         break;
 
+      case 69: //e
+        craneUp = true;
+        break;
+
+      case 67: //c
+        craneDown = true;
+        break;
     }
 
   };
@@ -88,6 +102,14 @@ THREE.PointerLockControls = function ( camera ) {
       case 39: // right
       case 68: // d
         moveRight = false;
+        break;
+
+        case 69: //e
+        craneUp = false;
+        break;
+
+      case 67: //c
+        craneDown = false;
         break;
 
     }
