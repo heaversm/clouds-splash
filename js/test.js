@@ -19,7 +19,7 @@
         console.log(camera);
 
         scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2( 0x18538b, .0005);
+        scene.fog = new THREE.FogExp2( 0x18538b, .00025);
 
         var light = new THREE.DirectionalLight( 0xffffff, 1.5 );
         light.position.set( 1, 1, 1 );
@@ -39,17 +39,27 @@
         var floorTexture = THREE.ImageUtils.loadTexture( 'images/dot-repeated.jpg' );
         floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
         floorTexture.repeat.set( 1, 1 );
-        var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide  } );
+
+        var backgroundInteriorMaterials = [];
+        for ( var i = 0; i < 6; i ++ ) {
+
+          backgroundInteriorMaterials.push(
+              new THREE.MeshBasicMaterial(
+              {
+                  map: floorTexture,
+                  transparent: true,
+                  opacity: 1, //visible
+                  side: THREE.BackSide
+              }
+          ));
+
+        }
 
         var floor = new THREE.Mesh(
-            //new THREE.CubeGeometry( 2000, 2000, 20,16, 16 ),
-            //new THREE.MeshLambertMaterial({color: 0x161616})
-            new THREE.PlaneGeometry( 2000, 2000,8, 8 ),
-            floorMaterial
+            new THREE.CubeGeometry( 2000, 2000, 2000,16, 16 ),
+            new THREE.MeshFaceMaterial(backgroundInteriorMaterials)
         );
 
-        floor.rotation.x = -90;
-        floor.position.y = -200;
         scene.add(floor);
 
         /* TEXT */
@@ -70,7 +80,6 @@
         textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff } );
         textMesh = new THREE.Mesh( text3d, textMaterial );
         textMesh.position.x = centerOffset;
-        textMesh.rotation.x = -.5;
         textObject = new THREE.Object3D();
 
         textObject.add( textMesh );

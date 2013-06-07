@@ -5,7 +5,7 @@
 THREE.PointerLockControls = function ( camera ) {
 
   var scope = this;
-  var MOVESPEED = .2;
+  var MOVESPEED = .9;
 
   var pitchObject = new THREE.Object3D();
   pitchObject.rotation.x = -.55;
@@ -27,22 +27,31 @@ THREE.PointerLockControls = function ( camera ) {
 
   var PI_2 = Math.PI / 2;
 
+  var mouseIsDown = false;
+
+  var onMouseDown = function(event){
+    mouseIsDown = true;
+  }
+
+  var onMouseUp = function(event){
+    mouseIsDown = false;
+  }
+
   var onMouseMove = function ( event ) {
 
-    if ( scope.enabled === false ) return;
+    if (mouseIsDown){
 
-    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+      if ( scope.enabled === false ) return;
 
-    /*yawObject.rotation.y -= movementX * 0.002;
+      var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+      var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-    if (pitchObject.rotation.x < -.5 && pitchObject.rotation.y < -1){
-      pitchObject.rotation.x -= movementY * 0.002;
+      yawObject.rotation.y -= movementX * 0.001;
+
+      pitchObject.rotation.x -= movementY * 0.001;
       pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
-    }*/
 
-    /* MH Find out how to set bounds here - should be between around -.5 & -1 x rotation */
-
+    }
 
   };
 
@@ -119,6 +128,8 @@ THREE.PointerLockControls = function ( camera ) {
   document.addEventListener( 'mousemove', onMouseMove, false );
   document.addEventListener( 'keydown', onKeyDown, false );
   document.addEventListener( 'keyup', onKeyUp, false );
+  document.addEventListener('mousedown',onMouseDown,false);
+  document.addEventListener('mouseup',onMouseUp,false);
 
   this.enabled = false;
 
