@@ -5,8 +5,10 @@
 THREE.PointerLockControls = function ( camera ) {
 
   var scope = this;
+  var MOVESPEED = .2;
 
   var pitchObject = new THREE.Object3D();
+  pitchObject.rotation.x = -.55;
   pitchObject.add( camera );
 
   var yawObject = new THREE.Object3D();
@@ -30,8 +32,9 @@ THREE.PointerLockControls = function ( camera ) {
     var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
     yawObject.rotation.y -= movementX * 0.002;
-    pitchObject.rotation.x -= movementY * 0.002;
 
+    /* MH Find out how to set bounds here - should be between around -.5 & -1 x rotation */
+    pitchObject.rotation.x -= movementY * 0.002;
     pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
 
   };
@@ -114,11 +117,11 @@ THREE.PointerLockControls = function ( camera ) {
 
     velocity.y -= 0.25 * delta;
 
-    if ( moveForward ) velocity.z -= 0.12 * delta;
-    if ( moveBackward ) velocity.z += 0.12 * delta;
+    if ( moveForward ) velocity.z -= MOVESPEED * delta;
+    if ( moveBackward ) velocity.z += MOVESPEED * delta;
 
-    if ( moveLeft ) velocity.x -= 0.12 * delta;
-    if ( moveRight ) velocity.x += 0.12 * delta;
+    if ( moveLeft ) velocity.x -= MOVESPEED * delta;
+    if ( moveRight ) velocity.x += MOVESPEED * delta;
 
     yawObject.translateX( velocity.x );
     yawObject.translateY( velocity.y );
