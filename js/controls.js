@@ -8,7 +8,8 @@ THREE.PointerLockControls = function ( camera ) {
   var MOVESPEED = .9;
 
   var pitchObject = new THREE.Object3D();
-  pitchObject.rotation.x = -.55;
+  pitchObject.rotation.x = -.004;
+
   pitchObject.add( camera );
 
   var yawObject = new THREE.Object3D();
@@ -50,6 +51,7 @@ THREE.PointerLockControls = function ( camera ) {
 
       pitchObject.rotation.x -= movementY * 0.001;
       pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
+
 
     }
 
@@ -150,22 +152,38 @@ THREE.PointerLockControls = function ( camera ) {
 
     velocity.y -= 0.25 * delta;
 
-    if ( moveForward ) velocity.z -= MOVESPEED * delta;
-    if ( moveBackward ) velocity.z += MOVESPEED * delta;
+    if ( moveForward ){
+      velocity.z -= MOVESPEED * delta;
+    }
 
-    if ( moveLeft ) velocity.x -= MOVESPEED * delta;
-    if ( moveRight ) velocity.x += MOVESPEED * delta;
+    if ( moveBackward ){
+      velocity.z += MOVESPEED * delta;
+    }
+
+    if ( moveLeft ){
+      velocity.x -= MOVESPEED * delta;
+    }
+
+    if ( moveRight ){
+      velocity.x += MOVESPEED * delta;
+    }
 
     yawObject.translateX( velocity.x );
     yawObject.translateY( velocity.y );
     yawObject.translateZ( velocity.z );
 
     if ( yawObject.position.y < 10 ) {
-
       velocity.y = 0;
       yawObject.position.y = 10;
-
     }
+
+    /*if (yawObject.position.z < -900){
+      velocity.z = 0;
+      yawObject.position.z = -900;
+    } else if (yawObject.position.z > 100){
+      velocity.z = 0;
+      yawObject.position.z = 100;
+    }*/
 
   };
 

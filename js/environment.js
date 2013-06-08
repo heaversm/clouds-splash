@@ -76,7 +76,6 @@
         text3d.computeBoundingBox();
         var centerOffset = -0.5 * ( text3d.boundingBox.max.x - text3d.boundingBox.min.x );
 
-
         textMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff } );
         textMesh = new THREE.Mesh( text3d, textMaterial );
         textMesh.position.x = centerOffset;
