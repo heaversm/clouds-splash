@@ -53,7 +53,7 @@
           program: function ( context ) {
 
             context.beginPath();
-            context.arc( 0, 0, 1, 0, PI2, true );
+            context.arc( 0, 0, .2, 0, PI2, true );
             context.closePath();
             context.fill();
 
@@ -68,7 +68,7 @@
           particle.position.y = Math.random() * 2 - 1;
           particle.position.z = Math.random() * 2 - 1;
           particle.position.normalize();
-          particle.position.multiplyScalar( Math.random() * 10 + 600 );
+          particle.position.multiplyScalar( Math.random() * 10 + 600 ); //disabling this sets the dispersion from a single outwardly expanding point rather than a sphere
 
           initParticle( particle, i * 10 );
 
@@ -85,7 +85,7 @@
           size: 100,
           height: 20,
           curveSegments: 5,
-          font: "bender"  //change this
+          font: "materiapro"  //change this
         });
 
         text3d.computeBoundingBox();
@@ -98,19 +98,6 @@
 
         textObject.add( textMesh );
         scene.add( textObject );
-
-        /* TEXT 2 */
-        /*loader = new THREE.JSONLoader();
-
-        loader.load( "js/clouds-text.js", function( geometry ) {
-            loaderMesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-            loaderMesh.scale.set( 50, 50, 50 );
-            loaderMesh.position.y = 0;
-            loaderMesh.position.x = 0;
-            loaderMesh.position.z = 0;
-            scene.add( loaderMesh );
-            animate();
-        } );*/
 
         renderer = new THREE.CanvasRenderer();
         //renderer = new THREE.WebGLRenderer();
