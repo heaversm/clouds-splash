@@ -47,7 +47,7 @@
         particles, particle;
 
         var PI2 = Math.PI * 2;
-        var material = new THREE.ParticleBasicMaterial( {
+        var material = new THREE.ParticleCanvasMaterial( {
 
           color: 0xffffff,
           program: function ( context ) {
