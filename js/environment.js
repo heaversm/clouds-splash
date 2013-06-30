@@ -38,9 +38,21 @@
         scene.add( light );
 
         /* CONTROLS */
-        controls = new THREE.PointerLockControls( camera );
-        controls.enabled = true;
-        scene.add( controls.getObject() );
+        controls = new THREE.TrackballControls( camera );
+        controls.target.set( 0, 0, 0 );
+
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+
+        controls.noZoom = false;
+        controls.noPan = false;
+
+        controls.staticMoving = false;
+        controls.dynamicDampingFactor = 0.15;
+
+        controls.keys = [ 65, 83, 68 ];
+        //scene.add( controls.getObject() );
 
         /* CLOUD */
         var container, separation = 100, amountX = 50, amountY = 50,
@@ -115,7 +127,8 @@
         // note: three.js includes requestAnimationFrame shim
         requestAnimationFrame( animate );
 
-        controls.update( Date.now() - time );
+        controls.update();
+        //controls.update( Date.now() - time );
 
         TWEEN.update();
         renderer.render( scene, camera );
