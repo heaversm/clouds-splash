@@ -1,6 +1,13 @@
 
-    var camera, scene, renderer;
+    var camera, cameraTarget, cameraDummy;
+    var mouse;
+
+    var scene, renderer;
     var textMesh,textObject;
+
+    var angle = ( Math.PI * 2 ) / 10;
+    var rotation = 0, rotationTarget = 0;
+
 
     var controls,time = Date.now();
 
@@ -22,11 +29,22 @@
         WINDOW_WIDTH = window.innerWidth;
         WINDOW_HEIGHT = window.innerHeight;
 
+
         camera = new THREE.PerspectiveCamera( 75, WINDOW_WIDTH / WINDOW_HEIGHT, 1, 10000 );
-        camera.position.z = 1000;
+
+        //http://www.aaronkoblin.com/Aaronetrope/js/Main.js
+        cameraTarget = new THREE.Vector3( 0, 0, 0 );
+        cameraDummy = new THREE.Object3D();
+        cameraDummy.add( camera );
+
+        camera.position.z = 50;
         console.log(camera);
 
         scene = new THREE.Scene();
+        scene.add( cameraDummy );
+
+
+        mouse = new THREE.Vector2();
 
 
         var light = new THREE.DirectionalLight( 0xffffff, 1.5 );
@@ -36,23 +54,6 @@
         var light = new THREE.DirectionalLight( 0xffffff, 0.75 );
         light.position.set( -1, - 0.5, -1 );
         scene.add( light );
-
-        /* CONTROLS */
-        controls = new THREE.TrackballControls( camera );
-        controls.target.set( 0, 0, 0 );
-
-        controls.rotateSpeed = 1.0;
-        controls.zoomSpeed = 1.2;
-        controls.panSpeed = 0.8;
-
-        controls.noZoom = false;
-        controls.noPan = false;
-
-        controls.staticMoving = false;
-        controls.dynamicDampingFactor = 0.15;
-
-        controls.keys = [ 65, 83, 68 ];
-        //scene.add( controls.getObject() );
 
         /* CLOUD */
         var container, separation = 100, amountX = 50, amountY = 50,
@@ -116,8 +117,6 @@
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.domElement.style.backgroundColor = '#000000';
 
-        document.body.appendChild( renderer.domElement );
-
 
 
     }
@@ -126,14 +125,21 @@
 
         // note: three.js includes requestAnimationFrame shim
         requestAnimationFrame( animate );
-
-        controls.update();
-        //controls.update( Date.now() - time );
-
         TWEEN.update();
+        var x = mouse.x * 100.0;
+        var y = mouse.y * 100.0;
+        camera.position.x += ( x - camera.position.x ) * 0.1;
+        camera.position.y += ( y - camera.position.y ) * 0.1;
+        camera.lookAt( cameraTarget );
+        rotation += ( rotationTarget - rotation ) * 0.1;
+
+        cameraDummy.position.x = Math.sin( rotation * angle ) * 700;
+        cameraDummy.position.z = Math.cos( rotation * angle ) * 700;
+        cameraDummy.rotation.y = rotation * angle;
+
         renderer.render( scene, camera );
 
-        time = Date.now();
+
 
     }
 
@@ -162,3 +168,46 @@
 
     }
 
+
+
+
+var onDocumentMouseDown = function ( event ) {
+
+  onDocumentMouseDownX = event.clientX;
+
+  var onDocumentMouseMove = function ( event ) {
+
+    document.body.style.cursor = 'move';
+
+    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+
+    rotationTarget -= movementX * 0.005;
+
+  };
+
+  var onDocumentMouseUp = function ( event ) {
+
+    document.body.style.cursor = 'pointer';
+
+    document.removeEventListener( 'mousemove', onDocumentMouseMove );
+    document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+  };
+
+  document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+};
+
+var onDocumentMouseMove = function ( event ) {
+  console.log('move');
+  event.preventDefault();
+
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+};
+
+document.body.appendChild( renderer.domElement );
+document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+document.addEventListener( 'mousemove', onDocumentMouseMove, false );
