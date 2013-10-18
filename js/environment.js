@@ -25,7 +25,7 @@
         WINDOW_HEIGHT = window.innerHeight;
 
 
-        camera = new THREE.PerspectiveCamera( 50, WINDOW_WIDTH / WINDOW_HEIGHT, 100, 5000 );
+        camera = new THREE.PerspectiveCamera( 75, WINDOW_WIDTH / WINDOW_HEIGHT, 100, 5000 ); //set FOV to widen / narrow view
 
         //http://www.aaronkoblin.com/Aaronetrope/js/Main.js
         cameraTarget = new THREE.Vector3( 0, 0, -1500 );
@@ -89,7 +89,7 @@
 
         var text3d = new THREE.TextGeometry(theText, {
           size: 100,
-          height: 10,
+          height: 1,
           curveSegments: 5,
           font: "materiapro"  //change this
         });
@@ -103,7 +103,7 @@
         textObject = new THREE.Object3D();
 
         textObject.add( textMesh );
-        textObject.position.z = -1000;
+        //textObject.position.z = -1000;
         scene.add( textObject );
 
         renderer = new THREE.CanvasRenderer();
@@ -133,6 +133,11 @@
         cameraDummy.position.x = Math.sin( rotation * angle ) * 1500;
         cameraDummy.position.z = Math.cos( rotation * angle ) * 1500;
         cameraDummy.rotation.y = rotation * angle;
+
+
+        // cameraTarget.x += ( x - cameraTarget.x ) * 0.1;
+        // cameraTarget.y += ( y - cameraTarget.y ) * 0.1;
+
 
         renderer.render( scene, camera );
 
@@ -177,7 +182,7 @@ var onDocumentMouseDown = function ( event ) {
     var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
     /*var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;*/
 
-    rotationTarget -= movementX * 0.005;
+    rotationTarget -= movementX * 0.001; //adjust to change maximum distance we can rotate around the text
 
   };
 
