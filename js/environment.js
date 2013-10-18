@@ -7,15 +7,10 @@
 
     var angle = ( Math.PI * 2 ) / 10;
     var rotation = 0, rotationTarget = 0;
+    var movementX, movementX;
 
 
     var controls,time = Date.now();
-
-    var UNITSIZE = 250, WINDOW_WIDTH, WINDOW_HEIGHT;
-
-    var SEPARATION = 200,
-          AMOUNTX = 10,
-          AMOUNTY = 10
 
     init();
     animate();
@@ -30,14 +25,14 @@
         WINDOW_HEIGHT = window.innerHeight;
 
 
-        camera = new THREE.PerspectiveCamera( 75, WINDOW_WIDTH / WINDOW_HEIGHT, 1, 10000 );
+        camera = new THREE.PerspectiveCamera( 50, WINDOW_WIDTH / WINDOW_HEIGHT, 100, 5000 );
 
         //http://www.aaronkoblin.com/Aaronetrope/js/Main.js
-        cameraTarget = new THREE.Vector3( 0, 0, 0 );
+        cameraTarget = new THREE.Vector3( 0, 0, -1500 );
         cameraDummy = new THREE.Object3D();
+        cameraDummy.position.set( Math.sin( 0 ) * 1500, 0, Math.cos( 0 ) * 1500 );
         cameraDummy.add( camera );
 
-        camera.position.z = 50;
         console.log(camera);
 
         scene = new THREE.Scene();
@@ -56,8 +51,6 @@
         scene.add( light );
 
         /* CLOUD */
-        var container, separation = 100, amountX = 50, amountY = 50,
-        particles, particle;
 
         var PI2 = Math.PI * 2;
         var material = new THREE.ParticleCanvasMaterial( {
@@ -92,11 +85,11 @@
 
         /* TEXT */
 
-        var theText = "C  L  O  U  D  S";
+        var theText = "C    L    O    U    D    S";
 
         var text3d = new THREE.TextGeometry(theText, {
           size: 100,
-          height: 20,
+          height: 10,
           curveSegments: 5,
           font: "materiapro"  //change this
         });
@@ -110,6 +103,7 @@
         textObject = new THREE.Object3D();
 
         textObject.add( textMesh );
+        textObject.position.z = -1000;
         scene.add( textObject );
 
         renderer = new THREE.CanvasRenderer();
@@ -126,20 +120,21 @@
         // note: three.js includes requestAnimationFrame shim
         requestAnimationFrame( animate );
         TWEEN.update();
+
         var x = mouse.x * 100.0;
         var y = mouse.y * 100.0;
+
         camera.position.x += ( x - camera.position.x ) * 0.1;
         camera.position.y += ( y - camera.position.y ) * 0.1;
         camera.lookAt( cameraTarget );
+
         rotation += ( rotationTarget - rotation ) * 0.1;
 
-        cameraDummy.position.x = Math.sin( rotation * angle ) * 700;
-        cameraDummy.position.z = Math.cos( rotation * angle ) * 700;
+        cameraDummy.position.x = Math.sin( rotation * angle ) * 1500;
+        cameraDummy.position.z = Math.cos( rotation * angle ) * 1500;
         cameraDummy.rotation.y = rotation * angle;
 
         renderer.render( scene, camera );
-
-
 
     }
 
@@ -180,6 +175,7 @@ var onDocumentMouseDown = function ( event ) {
     document.body.style.cursor = 'move';
 
     var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    /*var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;*/
 
     rotationTarget -= movementX * 0.005;
 
@@ -200,12 +196,9 @@ var onDocumentMouseDown = function ( event ) {
 };
 
 var onDocumentMouseMove = function ( event ) {
-  console.log('move');
   event.preventDefault();
-
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1; //ranges between -1 and 1, 0 being in the center
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 };
 
 document.body.appendChild( renderer.domElement );
