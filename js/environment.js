@@ -230,7 +230,7 @@
 
       for (var i=0;i<particles.length;i++){
         generateParticle(particles[i],particleVars.smallestSize,particleVars.largestSize);
-        particles[i].particleTween.to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear }, particleVars.lifeSpan ).start();
+        particles[i].particleTween.to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeZFar - particleVars.rangeZNear }, particleVars.lifeSpan ).start();
       }
 
     }
