@@ -9,6 +9,33 @@
     var rotation = 0, rotationTarget = 0;
     var movementX, movementX;
 
+    /* GUI VARS */
+    var particles = [];
+
+    var cameraVars = { fov: 75, near: 100, far: 5000 };
+    var particleVars = {
+      amount: 1500,
+      dispersion: 1200,
+      smallestSize: 1,
+      largestSize: 3,
+      rangeXNear: 2000,
+      rangeXFar: 4000,
+      rangeYNear: 500,
+      rangeYFar: 1000,
+      rangeZNear: 2000,
+      rangeZFar: 4000,
+      lifeSpan: 100000
+    };
+    var textVars = { height: 1 };
+    var renderVars = {
+      updateCamera: function(){
+        camera.updateProjectionMatrix();
+      },
+      updateParticles: function(){
+        console.log('updateParticles');
+        onUpdateParticles();
+      }
+    }
 
     var controls,time = Date.now();
 
@@ -25,7 +52,7 @@
         WINDOW_HEIGHT = window.innerHeight;
 
 
-        camera = new THREE.PerspectiveCamera( 75, WINDOW_WIDTH / WINDOW_HEIGHT, 100, 5000 ); //set FOV to widen / narrow view
+        camera = new THREE.PerspectiveCamera( cameraVars.fov, WINDOW_WIDTH / WINDOW_HEIGHT, cameraVars.near, cameraVars.far ); //set FOV to widen / narrow view
 
         //http://www.aaronkoblin.com/Aaronetrope/js/Main.js
         cameraTarget = new THREE.Vector3( 0, 0, -1500 );
@@ -59,7 +86,7 @@
           program: function ( context ) {
 
             context.beginPath();
-            context.arc( 0, 0, .2, 0, PI2, true );
+            context.arc( 0, 0, .2, 0, PI2, true ); //the size of the particle
             context.closePath();
             context.fill();
 
@@ -67,17 +94,18 @@
 
         } );
 
-        for ( var i = 0; i < 1000; i ++ ) {
+        for ( var i = 0; i < particleVars.amount; i ++ ) {
 
           particle = new THREE.Particle( material );
           particle.position.x = Math.random() * 2 - 1;
           particle.position.y = Math.random() * 2 - 1;
           particle.position.z = Math.random() * 2 - 1;
           particle.position.normalize();
-          particle.position.multiplyScalar( Math.random() * 10 + 600 ); //disabling this sets the dispersion from a single outwardly expanding point rather than a sphere
+          particle.position.multiplyScalar( Math.random() * 10 + particleVars.dispersion ); //disabling this sets the dispersion from a single outwardly expanding point rather than a sphere. Added number is the radius of the sphere
 
-          initParticle( particle, i * 10 );
-
+          //initParticle( particle, i * 10); //the rate at which particles disperse (delay)
+          initParticle( particle); //the rate at which particles disperse (delay)
+          particles.push(particle);
           scene.add( particle );
 
         }
@@ -111,7 +139,26 @@
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.domElement.style.backgroundColor = '#000000';
 
-
+        /* GUI */
+        var gui = new dat.GUI();
+        var folderCamera = gui.addFolder('Camera');
+        var folderParticles = gui.addFolder('Particles');
+        folderCamera.add(camera, 'fov',0,200);
+        folderCamera.add(camera, 'near',1,500);
+        folderCamera.add(camera, 'far',1000,10000);
+        folderCamera.add(renderVars,"updateCamera");
+        //folderParticles.add(particleVars,"amount",500,2500);
+        //folderParticles.add(particleVars,"dispersion",0,2000);
+        folderParticles.add(particleVars,"smallestSize",1,5);
+        folderParticles.add(particleVars,"largestSize",1,20);
+        folderParticles.add(particleVars,"rangeXNear",0,4000);
+        folderParticles.add(particleVars,"rangeXFar",0,8000);
+        folderParticles.add(particleVars,"rangeYNear",0,4000);
+        folderParticles.add(particleVars,"rangeYFar",0,8000);
+        folderParticles.add(particleVars,"rangeZNear",0,4000);
+        folderParticles.add(particleVars,"rangeZFar",0,8000);
+        folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
+        folderParticles.add(renderVars,"updateParticles");
 
     }
 
@@ -148,27 +195,45 @@
       var particle = this instanceof THREE.Particle ? this : particle;
       var delay = delay !== undefined ? delay : 0;
 
-      particle.scale.x = particle.scale.y = Math.random() * 3 + 1;
+      generateParticle(particle,particleVars.smallestSize,particleVars.largestSize);
+      //particle.scale.x = particle.scale.y = Math.random() * particleVars.largestSize + particleVars.smallestSize; //variance in particle scale
 
-      new TWEEN.Tween( particle )
+      /*new TWEEN.Tween( particle )
         .delay( delay )
-        .to( {}, 100000 )
+        .to( {}, 100000 ) //life of particle
         .onComplete( initParticle )
+        .start();*/
+
+      particle.particleTween = new TWEEN.Tween( particle.position )
+        //.delay( delay )
+        .to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear }, particleVars.lifeSpan )
+        //.onUpdate(function(){ onUpdateParticles(); })
         .start();
 
-      new TWEEN.Tween( particle.position )
-        .delay( delay )
-        .to( { x: Math.random() * 4000 - 2000, y: Math.random() * 1000 - 500, z: Math.random() * 4000 - 2000 }, 100000 )
-        .start();
 
-      new TWEEN.Tween( particle.scale )
+
+      /*new TWEEN.Tween( particle.scale )
         .delay( delay )
         .to( { x: 0, y: 0 }, 100000 )
-        .start();
+        .start();*/
 
     }
 
+    function generateParticle(particle,min,max){
+      particle.scale.x = particle.scale.y = Math.random() * max + min;
+    }
 
+    function onUpdateParticles(){
+      console.log('onupdateParticles');
+
+      //generateParticle(particleVars.smallestSize,particleVars.largestSize);
+
+      for (var i=0;i<particles.length;i++){
+        generateParticle(particles[i],particleVars.smallestSize,particleVars.largestSize);
+        particles[i].particleTween.to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear }, particleVars.lifeSpan ).start();
+      }
+
+    }
 
 
 var onDocumentMouseDown = function ( event ) {
