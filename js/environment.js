@@ -8,23 +8,24 @@
     var angle = ( Math.PI * 2 ) / 10;
     var rotation = 0, rotationTarget = 0;
     var movementX, movementX;
+    var geometry;
 
     /* GUI VARS */
     var particles = [];
 
-    var cameraVars = { fov: 75, near: 100, far: 5000 };
+    var cameraVars = { fov: 70, near: 100, far: 5000 };
     var particleVars = {
       amount: 1500,
-      dispersion: 1200,
+      dispersion: 800,
       smallestSize: 1,
       largestSize: 3,
       rangeXNear: 2000,
       rangeXFar: 4000,
-      rangeYNear: 500,
-      rangeYFar: 1000,
+      rangeYNear: 2000,
+      rangeYFar: 4000,
       rangeZNear: 2000,
       rangeZFar: 4000,
-      lifeSpan: 100000
+      lifeSpan: 10000,
     };
     var textVars = { height: 1 };
     var renderVars = {
@@ -32,7 +33,6 @@
         camera.updateProjectionMatrix();
       },
       updateParticles: function(){
-        console.log('updateParticles');
         onUpdateParticles();
       }
     }
@@ -59,8 +59,6 @@
         cameraDummy = new THREE.Object3D();
         cameraDummy.position.set( Math.sin( 0 ) * 1500, 0, Math.cos( 0 ) * 1500 );
         cameraDummy.add( camera );
-
-        console.log(camera);
 
         scene = new THREE.Scene();
         scene.add( cameraDummy );
@@ -97,11 +95,18 @@
         for ( var i = 0; i < particleVars.amount; i ++ ) {
 
           particle = new THREE.Particle( material );
-          particle.position.x = Math.random() * 2 - 1;
-          particle.position.y = Math.random() * 2 - 1;
-          particle.position.z = Math.random() * 2 - 1;
+
+          var sphereCoords = generateSphericalPosition();
+
+          particle.position.x = sphereCoords.x;
+          particle.position.y = sphereCoords.y;
+          particle.position.z = sphereCoords.z;
           particle.position.normalize();
           particle.position.multiplyScalar( Math.random() * 10 + particleVars.dispersion ); //disabling this sets the dispersion from a single outwardly expanding point rather than a sphere. Added number is the radius of the sphere
+
+          particle.originX = particle.position.x; //keep track of starting coordinates for implode
+          particle.originY= particle.position.y;
+          particle.originZ = particle.position.z;
 
           //initParticle( particle, i * 10); //the rate at which particles disperse (delay)
           initParticle( particle); //the rate at which particles disperse (delay)
@@ -198,17 +203,8 @@
       generateParticle(particle,particleVars.smallestSize,particleVars.largestSize);
       //particle.scale.x = particle.scale.y = Math.random() * particleVars.largestSize + particleVars.smallestSize; //variance in particle scale
 
-      /*new TWEEN.Tween( particle )
-        .delay( delay )
-        .to( {}, 100000 ) //life of particle
-        .onComplete( initParticle )
-        .start();*/
+      explode(particle);
 
-      particle.particleTween = new TWEEN.Tween( particle.position )
-        //.delay( delay )
-        .to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear }, particleVars.lifeSpan )
-        //.onUpdate(function(){ onUpdateParticles(); })
-        .start();
 
 
 
@@ -223,8 +219,40 @@
       particle.scale.x = particle.scale.y = Math.random() * max + min;
     }
 
+    function generateSphericalPosition(){
+      var sphereCoords = {};
+      sphereCoords.x = Math.random() * 2 - 1;
+      sphereCoords.y = Math.random() * 2 - 1;
+      sphereCoords.z = Math.random() * 2 - 1;
+
+      return sphereCoords;
+    }
+
+    function explode(particle){
+      particle.particleTween = new TWEEN.Tween( particle.position )
+        .delay( 2000 )
+        .to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeZFar - particleVars.rangeZNear }, 2000 )
+        .onComplete(function(){
+          implode(particle);
+        })
+        //.onUpdate(function(){ onUpdateParticles(); })
+        .start();
+    }
+
+    function implode(particle){
+
+      particle.particleTween = new TWEEN.Tween( particle.position )
+        .delay( 2000 )
+        .to( { x: particle.originX, y: particle.originY, z: particle.originZ }, Math.random()*2000)
+        .onComplete(function(){
+          //console.log('implode complete');
+          explode(particle);
+        })
+        //.onUpdate(function(){ onUpdateParticles(); })
+        .start();
+    }
+
     function onUpdateParticles(){
-      console.log('onupdateParticles');
 
       //generateParticle(particleVars.smallestSize,particleVars.largestSize);
 
