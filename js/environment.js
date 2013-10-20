@@ -26,6 +26,7 @@
       rangeZNear: 2000,
       rangeZFar: 4000,
       lifeSpan: 10000,
+      lineEveryXParticles: 7
     };
     var textVars = { height: 1 };
     var renderVars = {
@@ -92,6 +93,8 @@
 
         } );
 
+        geometry = new THREE.Geometry();
+
         for ( var i = 0; i < particleVars.amount; i ++ ) {
 
           particle = new THREE.Particle( material );
@@ -108,12 +111,22 @@
           particle.originY= particle.position.y;
           particle.originZ = particle.position.z;
 
+          var lineIterator = i%particleVars;
+
+          if (i%particleVars.lineEveryXParticles == 0){
+            geometry.vertices.push( particle.position );
+          }
+          //geometry.vertices.push( particle.position );
+
           //initParticle( particle, i * 10); //the rate at which particles disperse (delay)
           initParticle( particle); //the rate at which particles disperse (delay)
           particles.push(particle);
           scene.add( particle );
 
         }
+
+        var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.1 } ) );
+        scene.add( line );
 
 
         /* TEXT */
@@ -163,6 +176,7 @@
         folderParticles.add(particleVars,"rangeZNear",0,4000);
         folderParticles.add(particleVars,"rangeZFar",0,8000);
         folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
+        //folderParticles.add(particleVars,"lineEveryXParticles",1,100);
         folderParticles.add(renderVars,"updateParticles");
 
     }
@@ -204,9 +218,6 @@
       //particle.scale.x = particle.scale.y = Math.random() * particleVars.largestSize + particleVars.smallestSize; //variance in particle scale
 
       explode(particle);
-
-
-
 
       /*new TWEEN.Tween( particle.scale )
         .delay( delay )
