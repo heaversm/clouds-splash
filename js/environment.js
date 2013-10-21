@@ -8,7 +8,7 @@
     var angle = ( Math.PI * 2 ) / 10;
     var rotation = 0, rotationTarget = 0;
     var movementX, movementX;
-    var geometry;
+    var geometry,line;
 
     /* GUI VARS */
     var particles = [];
@@ -26,7 +26,10 @@
       rangeZNear: 2000,
       rangeZFar: 4000,
       lifeSpan: 10000,
-      lineEveryXParticles: 7
+      lineEveryXParticles: 7,
+      lineColor: [5, 232, 181],
+      lineOpacity: .1,
+      particleColor: [5,232,181]
     };
     var textVars = { height: 1 };
     var renderVars = {
@@ -79,9 +82,10 @@
         /* CLOUD */
 
         var PI2 = Math.PI * 2;
+        var particleColor = setColor(particleVars.particleColor);
         var material = new THREE.ParticleCanvasMaterial( {
 
-          color: 0xffffff,
+          color: particleColor,
           program: function ( context ) {
 
             context.beginPath();
@@ -125,7 +129,9 @@
 
         }
 
-        var line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.1 } ) );
+        var lineColor = setColor(particleVars.lineColor);
+
+        line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: lineColor, opacity: particleVars.lineOpacity } ) );
         scene.add( line );
 
 
@@ -176,6 +182,9 @@
         folderParticles.add(particleVars,"rangeZNear",0,4000);
         folderParticles.add(particleVars,"rangeZFar",0,8000);
         folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
+        folderParticles.add(line.material,"opacity",0,1);
+        folderParticles.addColor(particleVars,"particleColor");
+        folderParticles.addColor(particleVars,"lineColor");
         //folderParticles.add(particleVars,"lineEveryXParticles",1,100);
         folderParticles.add(renderVars,"updateParticles");
 
@@ -226,6 +235,21 @@
 
     }
 
+    function setColor(colorArray){
+      var newColor = 'rgb(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
+      return newColor;
+    }
+
+    function updateColor(colorArray){
+      var colorR = colorArray[0]/255;
+      var colorG = colorArray[1]/255;
+      var colorB = colorArray[2]/255;
+
+      var colorObject = {"r":colorR,"g":colorG,"b":colorB};
+      return colorObject;
+
+    }
+
     function generateParticle(particle,min,max){
       particle.scale.x = particle.scale.y = Math.random() * max + min;
     }
@@ -265,9 +289,22 @@
 
     function onUpdateParticles(){
 
+      //debugger;
+      line.material.opacity = particleVars.lineOpacity;
+      var lineColor = updateColor(particleVars.lineColor);
+      line.material.color.r = lineColor.r;
+      line.material.color.g = lineColor.g;
+      line.material.color.b = lineColor.b;
+
+
       //generateParticle(particleVars.smallestSize,particleVars.largestSize);
 
       for (var i=0;i<particles.length;i++){
+        var particleColor = updateColor(particleVars.particleColor);
+        particles[i].material.color.r = particleColor.r;
+        particles[i].material.color.g = particleColor.g;
+        particles[i].material.color.b = particleColor.b;
+
         generateParticle(particles[i],particleVars.smallestSize,particleVars.largestSize);
         particles[i].particleTween.to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeZFar - particleVars.rangeZNear }, particleVars.lifeSpan ).start();
       }
