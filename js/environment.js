@@ -178,26 +178,32 @@
         var folderCamera = gui.addFolder('Camera');
         var folderParticles = gui.addFolder('Particles');
         var folderLines = gui.addFolder("Lines");
-        var camFOV = camControls[0] = folderCamera.add(camera, 'fov',0,200);
-        var camNear = camControls[1] = folderCamera.add(camera, 'near',1,500);
-        var camFar = camControls[2] = folderCamera.add(camera, 'far',1000,10000);
+
+        camControls[0] = folderCamera.add(camera, 'fov',0,200);
+        camControls[1] = folderCamera.add(camera, 'near',1,500);
+        camControls[2] = folderCamera.add(camera, 'far',1000,10000);
         //folderCamera.add(renderVars,"updateCamera");
         //folderParticles.add(particleVars,"amount",500,2500);
         //folderParticles.add(particleVars,"dispersion",0,2000);
-        var particleSmall = particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
-        var particleLarge = particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
-        var particleRangeXNear = particleControls[2] = folderParticles.add(particleVars,"rangeXNear",0,4000);
-        var particleRangeXFar = particleControls[3] = folderParticles.add(particleVars,"rangeXFar",0,8000);
-        var particleRangeYNear = particleControls[4] = folderParticles.add(particleVars,"rangeYNear",0,4000);
-        var particleRangeYFar = particleControls[5] = folderParticles.add(particleVars,"rangeYFar",0,8000);
-        var particleRangeZNear = particleControls[6] = folderParticles.add(particleVars,"rangeZNear",0,4000);
-        var particleRangeZFar = particleControls[7] = folderParticles.add(particleVars,"rangeZFar",0,8000);
-        var particleLifespan = particleControls[8] = folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
-        var particleColor = particleControls[9] = folderParticles.addColor(particleVars,"particleColor");
+
+
+
+        particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
+        particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
+        particleControls[2] = folderParticles.add(particleVars,"rangeXNear",0,4000);
+        particleControls[3] = folderParticles.add(particleVars,"rangeXFar",0,8000);
+        particleControls[4] = folderParticles.add(particleVars,"rangeYNear",0,4000);
+        particleControls[5] = folderParticles.add(particleVars,"rangeYFar",0,8000);
+        particleControls[6] = folderParticles.add(particleVars,"rangeZNear",0,4000);
+        particleControls[7] = folderParticles.add(particleVars,"rangeZFar",0,8000);
+        particleControls[8] = folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
+        particleControls[9] = folderParticles.addColor(particleVars,"particleColor");
         //folderParticles.add(renderVars,"updateParticles");
 
-        var lineOpacity = lineControls[0] = folderLines.add(line.material,"opacity",0,1);
-        var lineOpacity = lineControls[1] = folderLines.addColor(lineVars,"lineColor");
+
+
+        lineControls[0] = folderLines.add(lineVars,"lineOpacity",0,1);
+        lineControls[1] = folderLines.addColor(lineVars,"lineColor");
         //folderLines.add(renderVars,"updateLines");
 
         //folderParticles.add(particleVars,"lineEveryXParticles",1,100);
