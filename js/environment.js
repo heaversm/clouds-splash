@@ -26,11 +26,18 @@
       rangeZNear: 2000,
       rangeZFar: 4000,
       lifeSpan: 10000,
-      lineEveryXParticles: 7,
-      lineColor: [5, 232, 181],
-      lineOpacity: .1,
       particleColor: [5,232,181]
     };
+    var lineVars = {
+      lineEveryXParticles: 7,
+      lineColor: [5, 232, 181],
+      lineOpacity: .1
+    }
+
+    var camControls = [];
+    var particleControls = [];
+    var lineControls = [];
+
     var textVars = { height: 1 };
     var renderVars = {
       updateCamera: function(){
@@ -38,6 +45,9 @@
       },
       updateParticles: function(){
         onUpdateParticles();
+      },
+      updateLines: function(){
+        onUpdateLines();
       }
     }
 
@@ -117,7 +127,7 @@
 
           var lineIterator = i%particleVars;
 
-          if (i%particleVars.lineEveryXParticles == 0){
+          if (i%lineVars.lineEveryXParticles == 0){
             geometry.vertices.push( particle.position );
           }
           //geometry.vertices.push( particle.position );
@@ -129,9 +139,9 @@
 
         }
 
-        var lineColor = setColor(particleVars.lineColor);
+        var lineColor = setColor(lineVars.lineColor);
 
-        line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: lineColor, opacity: particleVars.lineOpacity } ) );
+        line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: lineColor, opacity: lineVars.lineOpacity } ) );
         scene.add( line );
 
 
@@ -167,26 +177,60 @@
         var gui = new dat.GUI();
         var folderCamera = gui.addFolder('Camera');
         var folderParticles = gui.addFolder('Particles');
-        folderCamera.add(camera, 'fov',0,200);
-        folderCamera.add(camera, 'near',1,500);
-        folderCamera.add(camera, 'far',1000,10000);
-        folderCamera.add(renderVars,"updateCamera");
+        var folderLines = gui.addFolder("Lines");
+        var camFOV = camControls[0] = folderCamera.add(camera, 'fov',0,200);
+        var camNear = camControls[1] = folderCamera.add(camera, 'near',1,500);
+        var camFar = camControls[2] = folderCamera.add(camera, 'far',1000,10000);
+        //folderCamera.add(renderVars,"updateCamera");
         //folderParticles.add(particleVars,"amount",500,2500);
         //folderParticles.add(particleVars,"dispersion",0,2000);
-        folderParticles.add(particleVars,"smallestSize",1,5);
-        folderParticles.add(particleVars,"largestSize",1,20);
-        folderParticles.add(particleVars,"rangeXNear",0,4000);
-        folderParticles.add(particleVars,"rangeXFar",0,8000);
-        folderParticles.add(particleVars,"rangeYNear",0,4000);
-        folderParticles.add(particleVars,"rangeYFar",0,8000);
-        folderParticles.add(particleVars,"rangeZNear",0,4000);
-        folderParticles.add(particleVars,"rangeZFar",0,8000);
-        folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
-        folderParticles.add(line.material,"opacity",0,1);
-        folderParticles.addColor(particleVars,"particleColor");
-        folderParticles.addColor(particleVars,"lineColor");
+        var particleSmall = particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
+        var particleLarge = particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
+        var particleRangeXNear = particleControls[2] = folderParticles.add(particleVars,"rangeXNear",0,4000);
+        var particleRangeXFar = particleControls[3] = folderParticles.add(particleVars,"rangeXFar",0,8000);
+        var particleRangeYNear = particleControls[4] = folderParticles.add(particleVars,"rangeYNear",0,4000);
+        var particleRangeYFar = particleControls[5] = folderParticles.add(particleVars,"rangeYFar",0,8000);
+        var particleRangeZNear = particleControls[6] = folderParticles.add(particleVars,"rangeZNear",0,4000);
+        var particleRangeZFar = particleControls[7] = folderParticles.add(particleVars,"rangeZFar",0,8000);
+        var particleLifespan = particleControls[8] = folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
+        var particleColor = particleControls[9] = folderParticles.addColor(particleVars,"particleColor");
+        //folderParticles.add(renderVars,"updateParticles");
+
+        var lineOpacity = lineControls[0] = folderLines.add(line.material,"opacity",0,1);
+        var lineOpacity = lineControls[1] = folderLines.addColor(lineVars,"lineColor");
+        //folderLines.add(renderVars,"updateLines");
+
         //folderParticles.add(particleVars,"lineEveryXParticles",1,100);
-        folderParticles.add(renderVars,"updateParticles");
+
+
+        addControlListeners();
+
+    }
+
+    function addControlListeners(){
+      for (var i=0;i<camControls.length;i++){
+        camControls[i].onChange(function(){
+          camera.updateProjectionMatrix();
+        });
+      }
+
+      for (var j=0;j<particleControls.length;j++){ //color doesn't recognize onFinishChange
+        if (j < particleControls.length-1){
+          particleControls[j].onFinishChange(function(){
+            onUpdateParticles();
+          });
+        } else if (j == particleControls.length-1) {
+          particleControls[j].onChange(function(){
+            onUpdateParticles();
+          });
+        }
+      }
+
+      for (var k = 0; k< lineControls.length;k++){
+        lineControls[k].onChange(function(){
+          onUpdateLines();
+        });
+      }
 
     }
 
@@ -287,19 +331,20 @@
         .start();
     }
 
-    function onUpdateParticles(){
-
-      //debugger;
-      line.material.opacity = particleVars.lineOpacity;
-      var lineColor = updateColor(particleVars.lineColor);
+    function onUpdateLines(){
+      line.material.opacity = lineVars.lineOpacity;
+      var lineColor = updateColor(lineVars.lineColor);
       line.material.color.r = lineColor.r;
       line.material.color.g = lineColor.g;
       line.material.color.b = lineColor.b;
+    }
 
+    function onUpdateParticles(){
+      //debugger;
 
       //generateParticle(particleVars.smallestSize,particleVars.largestSize);
 
-      for (var i=0;i<particles.length;i++){
+      for (var i=0;i<particles.length-1;i++){
         var particleColor = updateColor(particleVars.particleColor);
         particles[i].material.color.r = particleColor.r;
         particles[i].material.color.g = particleColor.g;
