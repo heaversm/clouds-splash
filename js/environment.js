@@ -13,7 +13,7 @@
     /* GUI VARS */
     var particles = [];
 
-    var cameraVars = { fov: 70, near: 100, far: 5000 };
+    var cameraVars = { fov: 70, near: 100, far: 5000, xRange: 1, yRange: 1 };
     var particleVars = {
       amount: 1500,
       dispersion: 800,
@@ -172,6 +172,8 @@
         camControls[0] = folderCamera.add(camera, 'fov',50,175);
         camControls[1] = folderCamera.add(camera, 'near',1,500);
         camControls[2] = folderCamera.add(camera, 'far',1000,10000);
+        camControls[3] = folderCamera.add(cameraVars, 'xRange',0,10);
+        camControls[4] = folderCamera.add(cameraVars, 'yRange',0,10);
 
         particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
         particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
@@ -406,8 +408,13 @@ var onDocumentMouseDown = function ( event ) {
 
 var onDocumentMouseMove = function ( event ) {
   event.preventDefault();
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1; //ranges between -1 and 1, 0 being in the center
-  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  var percentX = (event.clientX / window.innerWidth); //ranges between 0 and 1;
+  var percentY =(event.clientY / window.innerHeight);
+
+  mouse.x = percentX*cameraVars.xRange - (cameraVars.xRange/2);
+  mouse.y = percentY*cameraVars.yRange - (cameraVars.yRange/2);
+  //mouse.x = (( event.clientX / window.innerWidth ) * 50)-50; //ranges between -1 and 1, 0 being in the center
+  //mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 };
 
 document.body.appendChild( renderer.domElement );
