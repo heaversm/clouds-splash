@@ -26,12 +26,13 @@
       rangeZNear: 2000,
       rangeZFar: 4000,
       lifeSpan: 10000,
-      particleColor: [5,232,181]
+      particleColor: [232,245,242],
+      updateColor: function(){ onUpdateParticles(); }
     };
     var lineVars = {
       lineEveryXParticles: 7,
-      lineColor: [5, 232, 181],
-      lineOpacity: .1
+      lineColor: [109, 186, 202],
+      lineOpacity: .15
     }
 
     var camControls = [];
@@ -39,17 +40,6 @@
     var lineControls = [];
 
     var textVars = { height: 1 };
-    var renderVars = {
-      updateCamera: function(){
-        camera.updateProjectionMatrix();
-      },
-      updateParticles: function(){
-        onUpdateParticles();
-      },
-      updateLines: function(){
-        onUpdateLines();
-      }
-    }
 
     var controls,time = Date.now();
 
@@ -179,14 +169,9 @@
         var folderParticles = gui.addFolder('Particles');
         var folderLines = gui.addFolder("Lines");
 
-        camControls[0] = folderCamera.add(camera, 'fov',0,200);
+        camControls[0] = folderCamera.add(camera, 'fov',50,175);
         camControls[1] = folderCamera.add(camera, 'near',1,500);
         camControls[2] = folderCamera.add(camera, 'far',1000,10000);
-        //folderCamera.add(renderVars,"updateCamera");
-        //folderParticles.add(particleVars,"amount",500,2500);
-        //folderParticles.add(particleVars,"dispersion",0,2000);
-
-
 
         particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
         particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
@@ -198,34 +183,29 @@
         particleControls[7] = folderParticles.add(particleVars,"rangeZFar",0,8000);
         particleControls[8] = folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
         particleControls[9] = folderParticles.addColor(particleVars,"particleColor");
-        //folderParticles.add(renderVars,"updateParticles");
-
-
+        particleControls[10] = folderParticles.add(particleVars,"updateColor");
 
         lineControls[0] = folderLines.add(lineVars,"lineOpacity",0,1);
         lineControls[1] = folderLines.addColor(lineVars,"lineColor");
-        //folderLines.add(renderVars,"updateLines");
-
-        //folderParticles.add(particleVars,"lineEveryXParticles",1,100);
-
 
         addControlListeners();
+        addKeyListeners();
 
     }
 
     function addControlListeners(){
       for (var i=0;i<camControls.length;i++){
         camControls[i].onChange(function(){
-          camera.updateProjectionMatrix();
+          onUpdateCamera();
         });
       }
 
-      for (var j=0;j<particleControls.length;j++){ //color doesn't recognize onFinishChange
-        if (j < particleControls.length-1){
+      for (var j=0;j<particleControls.length;j++){
+        if (j < particleControls.length-2){ //color doesn't recognize onFinishChange, all others do
           particleControls[j].onFinishChange(function(){
             onUpdateParticles();
           });
-        } else if (j == particleControls.length-1) {
+        } else if (j == particleControls.length-1) { //require click of "update" to change color for performance reasons
           particleControls[j].onChange(function(){
             onUpdateParticles();
           });
@@ -238,6 +218,51 @@
         });
       }
 
+    }
+
+    function addKeyListeners(){
+      document.onkeydown = function(event) {
+
+         if (!event){
+          event = window.event;
+         }
+
+         var code = event.keyCode;
+         if (event.charCode && code == 0){
+          code = event.charCode;
+         }
+
+         switch(code) {
+            case 37:
+                //keyLeft();
+                break;
+            case 38: //up
+            case 87:
+                decreaseFOV();
+                break;
+            case 39:
+                //keyRight();
+                break;
+            case 40: //down
+            case 83:
+                increaseFOV();
+                break;
+         }
+         event.preventDefault();
+      };
+    }
+
+    function increaseFOV(){
+      console.log('ifov');
+      var fovVal = camControls[0].getValue();
+      fovVal+=5;
+      camControls[0].setValue(fovVal);
+    }
+
+    function decreaseFOV(){
+      var fovVal = camControls[0].getValue();
+      fovVal-=5;
+      camControls[0].setValue(fovVal);
     }
 
     function animate() {
@@ -259,11 +284,6 @@
         cameraDummy.position.z = Math.cos( rotation * angle ) * 1500;
         cameraDummy.rotation.y = rotation * angle;
 
-
-        // cameraTarget.x += ( x - cameraTarget.x ) * 0.1;
-        // cameraTarget.y += ( y - cameraTarget.y ) * 0.1;
-
-
         renderer.render( scene, camera );
 
     }
@@ -274,14 +294,8 @@
       var delay = delay !== undefined ? delay : 0;
 
       generateParticle(particle,particleVars.smallestSize,particleVars.largestSize);
-      //particle.scale.x = particle.scale.y = Math.random() * particleVars.largestSize + particleVars.smallestSize; //variance in particle scale
 
       explode(particle);
-
-      /*new TWEEN.Tween( particle.scale )
-        .delay( delay )
-        .to( { x: 0, y: 0 }, 100000 )
-        .start();*/
 
     }
 
@@ -320,7 +334,6 @@
         .onComplete(function(){
           implode(particle);
         })
-        //.onUpdate(function(){ onUpdateParticles(); })
         .start();
     }
 
@@ -330,11 +343,13 @@
         .delay( 2000 )
         .to( { x: particle.originX, y: particle.originY, z: particle.originZ }, Math.random()*2000)
         .onComplete(function(){
-          //console.log('implode complete');
           explode(particle);
         })
-        //.onUpdate(function(){ onUpdateParticles(); })
         .start();
+    }
+
+    function onUpdateCamera(){
+      camera.updateProjectionMatrix();
     }
 
     function onUpdateLines(){
@@ -346,9 +361,6 @@
     }
 
     function onUpdateParticles(){
-      //debugger;
-
-      //generateParticle(particleVars.smallestSize,particleVars.largestSize);
 
       for (var i=0;i<particles.length-1;i++){
         var particleColor = updateColor(particleVars.particleColor);

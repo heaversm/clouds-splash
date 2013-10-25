@@ -62,6 +62,10 @@ h1 { font-weight: 300; font-size: 20px; color: #3ed3e0; }
   margin-top: 0;
 }
 
+.hue-field {
+  width:13px !important;
+}
+
 /*@font-face {
     font-family: 'materiapro_lightlight';
     src: url('../fonts/materia/materiapro_light-webfont.eot');
