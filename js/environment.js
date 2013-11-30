@@ -122,8 +122,6 @@ function init() {
       particle.originY= particle.position.y;
       particle.originZ = particle.position.z;
 
-      var lineIterator = i%particleVars;
-
       if (i%lineVars.lineEveryXParticles == 0){
         geometry1.vertices.push( particle.position );
       } else if (i%lineVars.lineEveryXParticles == 1){
@@ -133,8 +131,8 @@ function init() {
       }
 
       //initParticle( particle, i * 10); //the rate at which particles disperse (delay)
-      initParticle( particle); //the rate at which particles disperse (delay)
-      particles.push(particle);
+      initParticle( particle,i); //the rate at which particles disperse (delay)
+      particles.push( particle );
       scene.add( particle );
 
     }
@@ -210,9 +208,9 @@ function init() {
     lineControls[4] = folderLines.addColor(lineVars,"line2Color");
     lineControls[5] = folderLines.addColor(lineVars,"line3Color");
 
-
     addControlListeners();
     addKeyListeners();
+    addLineAnimations();
 
 }
 
@@ -275,6 +273,28 @@ function init() {
     };
   }
 
+  function addLineAnimations(){
+
+      line1.lineTween = new TWEEN.Tween( line1.material )
+      .to( { opacity: Math.random() }, 2000 )
+      .onComplete(function(){
+        TWEEN.remove(line1.lineTween);
+        TWEEN.remove(line2.lineTween);
+        TWEEN.remove(line3.lineTween);
+        addAnimations();
+      })
+      .start();
+
+      line2.lineTween = new TWEEN.Tween( line2.material )
+      .to( { opacity: Math.random() }, 2000 )
+      .start();
+
+      line3.lineTween = new TWEEN.Tween( line3.material )
+      .to( { opacity: Math.random() }, 2000 )
+      .start();
+
+  }
+
   function increaseFOV(){
     console.log('ifov');
     var fovVal = camControls[0].getValue();
@@ -309,40 +329,16 @@ function init() {
 
       renderer.render( scene, camera );
 
-      /*line.material.color.r =  (Math.random()*100) /100;
-      line.material.color.g = (Math.random()*100) / 100;
-      line.material.color.b = (Math.random()*100) /100;*/
-
-      //MH - adjust line color over time - find a way to make this smoother and more subtle
-      /*if (line.material.color.r < 1){
-        line.material.color.r += .001;
-      } else {
-        line.material.color.r = 0;
-      }
-
-      if (line.material.color.g < 1){
-        line.material.color.g += .001;
-      } else {
-        line.material.color.g = 0;
-      }
-
-      if (line.material.color.b < 1){
-        line.material.color.b += .001;
-      } else {
-        line.material.color.b = 0;
-      }*/
-
-
   }
 
-  function initParticle( particle, delay ) {
+  function initParticle( particle, index ) {
 
     var particle = this instanceof THREE.Particle ? this : particle;
     var delay = delay !== undefined ? delay : 0;
 
     generateParticle(particle,particleVars.smallestSize,particleVars.largestSize);
 
-    explode(particle);
+    explode(particle,index);
 
   }
 
@@ -374,12 +370,17 @@ function init() {
     return sphereCoords;
   }
 
-  function explode(particle){
+  function explode(particle,index){
+
     particle.particleTween = new TWEEN.Tween( particle.position )
-      .delay( 2000 )
+      .delay( index  )
       .to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeZFar - particleVars.rangeZNear }, 2000 )
       .onComplete(function(){
-        implode(particle);
+        //implode(particle);
+        particle.position.x = particle.originX,
+        particle.position.y = particle.originY,
+        particle.position.z = particle.originZ,
+        explode(particle,index);
       })
       .start();
   }
@@ -423,14 +424,6 @@ function init() {
     line3.material.color.r = line3Color.r;
     line3.material.color.g = line3Color.g;
     line3.material.color.b = line3Color.b;
-
-
-    /*for( var v = 0; v < line.geometry.vertices.length; v ++ ) {
-      var color = new THREE.Color( 0xffffff );
-      color.setHSL( v / line.geometry.vertices.length, 0.5, 0.5 );
-      line.geometry.colors.push(color);
-    }*/
-
   }
 
   function onUpdateParticles(){
