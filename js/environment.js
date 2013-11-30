@@ -275,22 +275,26 @@ function init() {
 
   function addLineAnimations(){
 
+      var opacity1 = Math.min(Math.random(), lineVars.line1Opacity);
+      var opacity2 = Math.min(Math.random(), lineVars.line2Opacity);
+      var opacity3 = Math.min(Math.random(), lineVars.line3Opacity);
+
       line1.lineTween = new TWEEN.Tween( line1.material )
-      .to( { opacity: Math.random() }, 2000 )
+      .to( { opacity: opacity1 }, 2000 )
       .onComplete(function(){
         TWEEN.remove(line1.lineTween);
         TWEEN.remove(line2.lineTween);
         TWEEN.remove(line3.lineTween);
-        addAnimations();
+        addLineAnimations();
       })
       .start();
 
       line2.lineTween = new TWEEN.Tween( line2.material )
-      .to( { opacity: Math.random() }, 2000 )
+      .to( { opacity: opacity2 }, 2000 )
       .start();
 
       line3.lineTween = new TWEEN.Tween( line3.material )
-      .to( { opacity: Math.random() }, 2000 )
+      .to( { opacity: opacity3 }, 2000 )
       .start();
 
   }
@@ -401,9 +405,6 @@ function init() {
   }
 
   function onUpdateLines(){
-    line1.material.opacity = lineVars.line1Opacity;
-    line2.material.opacity = lineVars.line2Opacity;
-    line3.material.opacity = lineVars.line3Opacity;
 
     var line1Color = updateColor(lineVars.line1Color);
     line1.material.color.r = line1Color.r;
