@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <div id="about" class="overlay">
+    <div id="overlay" class="overlay">
       <h1 id="about-title">About the Documentary</h1>
       <div id="about-text">
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean quis justo facilisis, rhoncus leo at, mattis dui. Praesent ac viverra justo, ac condimentum nibh. Sed eu justo sagittis, lobortis tortor ac, suscipit ante. Vestibulum vitae hendrerit tellus, nec scelerisque metus. Cras sodales justo in turpis congue gravida. Aliquam ac adipiscing lorem. Vivamus sollicitudin venenatis fermentum.</p>
@@ -26,14 +26,22 @@
     </div>
 
     <div id="nav">
-      <a href="http://www.kickstarter.com/projects/1636630114/clouds-interactive-documentary" target="_blank">Kickstarter </a>
-      <a id="about-link" href=""> About the Documentary</a>
+      <a id="about-link" class="navlink" data-id="about" href=""> About</a>
+      <a id="cast-link" href="" class="navlink" data-id="cast"> Cast</a>
+      <a id="credits-link" href="" class="navlink" data-id="credits"> Credits</a>
+      <a id="kickstarter-link" href="http://www.kickstarter.com/projects/1636630114/clouds-interactive-documentary" target="_blank" class="navlink" data-id="kickstarter">Kickstarter </a>
+      <a id="preorder-link" href="" class="navlink" data-id="preorder"> Pre-Order</a>
+      <a id="press-link" href="" class="navlink" data-id="presskit"> Press Kit</a>
     </div>
+
+
+
     <script src="js/vendor/jquery-2.0.2.min.js"></script>
     <script src="js/vendor/dat.gui.min.js"></script>
     <script src="js/vendor/three.min.js"></script>
     <script src="js/materiapro_light.typeface.js"></script>
     <script src="js/vendor/tween.min.js"></script>
+    <script src="js/vendor/tabletop.js"></script>
     <script src="js/environment.js"></script>
     <script src="js/site.js"></script>
 
