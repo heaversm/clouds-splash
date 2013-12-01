@@ -1,7 +1,6 @@
 body {
   margin:0;
   background: black;
-  /*font-family: 'materiapro_lightlight','Open Sans', sans-serif;*/
   font-family: 'Open Sans', sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
@@ -38,6 +37,10 @@ h1 { font-weight: 300; font-size: 20px; color: #3ed3e0; }
   margin-right: 20px;
 }
 
+.navlink {
+  cursor: pointer;
+}
+
 .overlay {
   position: fixed;
   background: rgba(0,0,0,.85);
@@ -47,34 +50,34 @@ h1 { font-weight: 300; font-size: 20px; color: #3ed3e0; }
   left:0;
   z-index: 998;
   display: none;
+  opacity: 0;
   padding: 20px;
   color: #fff;
 
 }
 
-#about-text {
-  columns:3;
--webkit-columns:3; /* Safari and Chrome */
--moz-columns:3; /* Firefox */
+.overlay-close {
+  float:right;
+  cursor: pointer;
 }
 
-#about-text p {
+.overlay-content p {
   margin-top: 0;
 }
 
-.hue-field {
-  width:13px !important;
+.screening {
+  font-size: 14px;
 }
 
-/*@font-face {
-    font-family: 'materiapro_lightlight';
-    src: url('../fonts/materia/materiapro_light-webfont.eot');
-    src: url('../fonts/materia/materiapro_light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/materia/materiapro_light-webfont.woff') format('woff'),
-         url('../fonts/materia/materiapro_light-webfont.ttf') format('truetype'),
-         url('../fonts/materia/materiapro_light-webfont.svg#materiapro_lightlight') format('svg');
-    font-weight: normal;
-    font-style: normal;
+.screening h3, .screening p {
+  display: inline-block;
+}
 
-}*/
+.screening h3 {
+  font-weight: 300;
+  width: 33%;
+}
+.screening p {
+  margin-left: 20px;
+}
 
