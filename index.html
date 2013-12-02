@@ -46,13 +46,60 @@
     </script>
 
     <script id="screenings-template" type="text/x-handlebars-template">
-      <div id="content-{{id}}" class="overlay-content">
+      <a class="overlay-close fa-times fa fa-fw"></a>
+      <div id="content-screenings" class="overlay-content">
         <h1 id="screenings-title" class="content-title">Screenings</h1>
         <div id="screenings">
            {{#each elements}}
             <div class="screening" id="screening-{{id}}">
-              <h3>{{ name }} </h3>
-              <p>{{start-date}} -  {{ end-date }}</p>
+              <span class="name">{{ name }} </span>
+              <span class="date">{{start-date}}  {{#if end-date}} -  {{ end-date }} {{/if}}</span>
+            </div>
+           {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="credits-template" type="text/x-handlebars-template">
+      <a class="overlay-close fa-times fa fa-fw"></a>
+      <div id="content-credits" class="overlay-content">
+        <h1 id="credits-title" class="content-title">Credits</h1>
+        <div id="credits">
+           {{#each elements}}
+            <div class="credit line" id="credit-{{id}}">
+              <span class="title">{{ title }} </span>
+              <span class="name">{{ name }}</span>
+              {{#if twitter}}<a class="twitter" href="http://twitter.com/{{twitter}}">@{{ twitter }}</a>{{/if}}
+            </div>
+           {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="cast-template" type="text/x-handlebars-template">
+      <a class="overlay-close fa-times fa fa-fw"></a>
+      <div id="content-cast" class="overlay-content">
+        <h1 id="cast-title" class="content-title">Cast</h1>
+        <div id="cast" class="columned">
+           {{#each elements}}
+            <div class="cast-member line" id="cast-{{id}}">
+              <span class="name">{{ name }} </span>
+              {{#if twitter}}<a class="twitter" href="http://twitter.com/{{twitter}}">@{{ twitter }}</a>{{/if}}
+            </div>
+           {{/each}}
+        </div>
+      </div>
+    </script>
+
+    <script id="press-template" type="text/x-handlebars-template">
+      <a class="overlay-close fa-times fa fa-fw"></a>
+      <div id="content-press" class="overlay-content">
+        <h1 id="press-title" class="content-title">Press</h1>
+        <div id="press">
+           {{#each elements}}
+            <div class="press-item line" id="press-{{id}}">
+              <span class="publication">{{ publication }} </span>
+              <a class="link" href="{{link}}">{{ title }}</a>
             </div>
            {{/each}}
         </div>

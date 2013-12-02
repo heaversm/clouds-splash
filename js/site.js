@@ -48,19 +48,36 @@
         if (externalLink == undefined){ //open a content window
 
           var source, pageContent;
-          if (linkID == "screenings"){ //render the template for screenings
-            source = $('#screenings-template').html();
-            pageContent = siteData.screenings;
-          } else { //render the general content template
-            source = $("#content-template").html();
-            pageContent = _.find(siteData.content.elements, function(element){
-              return element.id == linkID;
-            });
+
+          switch (linkID){
+            case 'screenings':
+              source = $('#screenings-template').html();
+              pageContent = siteData.screenings;
+              break;
+            case 'cast':
+              source = $('#cast-template').html();
+              pageContent = siteData.cast;
+              break;
+            case 'credits':
+              source = $('#credits-template').html();
+              pageContent = siteData.credits;
+              break;
+            case 'press':
+              source = $('#press-template').html();
+              pageContent = siteData.press;
+              break;
+            default:
+              source = $("#content-template").html();
+              pageContent = _.find(siteData.content.elements, function(element){
+                return element.id == linkID;
+              });
+              break;
           }
 
           var template = Handlebars.compile(source);
 
           var html = template(pageContent);
+
           $('#overlay').html(html);
           showOverlay();
 

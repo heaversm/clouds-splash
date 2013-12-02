@@ -14,7 +14,7 @@
     /* GUI VARS */
     var particles = [];
 
-    var cameraVars = { fov: 70, near: 100, far: 5000, xRange: 1, yRange: 1 };
+    var cameraVars = { fov: 70, near: 100, far: 5000, xRange: 10, yRange: 10 };
     var particleVars = {
       amount: 1500,
       dispersion: 800,
@@ -26,7 +26,7 @@
       rangeYFar: 4000,
       rangeZNear: 2000,
       rangeZFar: 4000,
-      lifeSpan: 10000,
+      lifeSpan: 26000,
       particleColor: [232,245,242],
       updateColor: function(){ onUpdateParticles(); }
   };
@@ -34,11 +34,11 @@
   var lineVars = {
     lineEveryXParticles: 45,
     line1Color: [109, 186, 202],
-    line2Color: [28,102,118],
+    line2Color: [35,113,130],
     line3Color: [97,207,230],
-    line1Opacity: .5,
-    line2Opacity: .5,
-    line3Opacity: .5
+    line1Opacity: .08,
+    line2Opacity: .15,
+    line3Opacity: .14
   }
 
   var camControls = [];
@@ -223,7 +223,7 @@
   }
 
   function addMouseListeners(){
-    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+    //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
   }
 
