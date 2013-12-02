@@ -33,7 +33,7 @@
     }
 
     function addOverlayListeners(){
-      $('.overlay-close').on('click',function(){
+      $('.overlay-close, #overlay').on('click',function(){
         hideOverlay();
       });
     }
