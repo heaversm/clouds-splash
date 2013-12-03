@@ -36,9 +36,10 @@
     line1Color: [109, 186, 202],
     line2Color: [35,113,130],
     line3Color: [97,207,230],
-    line1Opacity: .08,
+    line1Opacity: .15,
     line2Opacity: .15,
-    line3Opacity: .14
+    line3Opacity: .15,
+    updateLineLength: function(){ onUpdateLineLength(); }
   }
 
   var camControls = [];
@@ -184,19 +185,19 @@
       var folderParticles = gui.addFolder('Particles');
       var folderLines = gui.addFolder("Lines");
 
-      camControls[0] = folderCamera.add(camera, 'fov',50,175);
-      camControls[1] = folderCamera.add(camera, 'near',1,500);
-      camControls[2] = folderCamera.add(camera, 'far',1000,10000);
+      camControls[0] = folderCamera.add(camera, 'fov',50,175).step(1);
+      camControls[1] = folderCamera.add(camera, 'near',1,500).step(1);
+      camControls[2] = folderCamera.add(camera, 'far',1000,10000).step(100);
       camControls[3] = folderCamera.add(cameraVars, 'xRange',0,10).step(1);
       camControls[4] = folderCamera.add(cameraVars, 'yRange',0,10).step(1);
 
-      particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
-      particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
-      particleControls[2] = folderParticles.add(particleVars,"rangeXNear",0,4000);
-      particleControls[3] = folderParticles.add(particleVars,"rangeXFar",0,8000);
-      particleControls[4] = folderParticles.add(particleVars,"rangeYNear",0,4000);
-      particleControls[5] = folderParticles.add(particleVars,"rangeYFar",0,8000);
-      particleControls[6] = folderParticles.add(particleVars,"rangeZNear",0,4000);
+      particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5).step(1);
+      particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20).step(1);
+      particleControls[2] = folderParticles.add(particleVars,"rangeXNear",0,4000).step(100);
+      particleControls[3] = folderParticles.add(particleVars,"rangeXFar",0,8000).step(100);
+      particleControls[4] = folderParticles.add(particleVars,"rangeYNear",0,4000).step(100);
+      particleControls[5] = folderParticles.add(particleVars,"rangeYFar",0,8000).step(100);
+      particleControls[6] = folderParticles.add(particleVars,"rangeZNear",0,4000).step(100);
       particleControls[7] = folderParticles.add(particleVars,"rangeZFar",0,8000);
       particleControls[8] = folderParticles.add(particleVars,"lifeSpan",1000,100000).step(1000);
       particleControls[9] = folderParticles.addColor(particleVars,"particleColor");
@@ -208,6 +209,9 @@
       lineControls[3] = folderLines.addColor(lineVars,"line1Color");
       lineControls[4] = folderLines.addColor(lineVars,"line2Color");
       lineControls[5] = folderLines.addColor(lineVars,"line3Color");
+      lineControls[6] = folderLines.add(lineVars,"lineEveryXParticles",30,200).step(1);
+      lineControls[7] = folderLines.add(lineVars,"updateLineLength");
+
 
       addControlListeners();
       addKeyListeners();
@@ -450,6 +454,29 @@
 
         generateParticle(particles[i],particleVars.smallestSize,particleVars.largestSize);
         particles[i].particleTween.to( { x: Math.random() * particleVars.rangeXFar - particleVars.rangeXNear, y: Math.random() * particleVars.rangeYFar - particleVars.rangeYNear, z: Math.random() * particleVars.rangeZFar - particleVars.rangeZNear }, particleVars.lifeSpan ).start();
+      }
+
+    }
+
+    function onUpdateLineLength(){
+
+      var lines = [line1,line2,line3];
+      var desiredVertices = Math.floor(particleVars.amount / lineVars.lineEveryXParticles);
+
+      for (var i=0;i<lines.length;i++){
+        var thisLine = lines[i];
+        var numVertices = thisLine.geometry.vertices.length;
+        if (numVertices > desiredVertices){
+          var verticesToSplice = numVertices - desiredVertices;
+          thisLine.splicedVertices = thisLine.geometry.vertices.splice(desiredVertices,verticesToSplice);
+        } /*else if (numVertices < desiredVertices && thisLine.splicedVertices != undefined){
+          var verticesToAdd = desiredVertices - numVertices;
+
+          for (var j=0; j< verticesToAdd;j++){
+            thisLine.geometry.vertices.push(thisLine.splicedVertices[j]);
+            thisLine.splicedVertices.splice(j,1);
+          }
+        }*/
       }
 
     }
