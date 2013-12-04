@@ -187,8 +187,8 @@
       camControls[0] = folderCamera.add(camera, 'fov',50,175);
       camControls[1] = folderCamera.add(camera, 'near',1,500);
       camControls[2] = folderCamera.add(camera, 'far',1000,10000);
-      camControls[3] = folderCamera.add(cameraVars, 'xRange',0,10).step(1);
-      camControls[4] = folderCamera.add(cameraVars, 'yRange',0,10).step(1);
+      camControls[3] = folderCamera.add(cameraVars, 'xRange',0,20).step(1);
+      camControls[4] = folderCamera.add(cameraVars, 'yRange',0,20).step(1);
 
       particleControls[0] = folderParticles.add(particleVars,"smallestSize",1,5);
       particleControls[1] = folderParticles.add(particleVars,"largestSize",1,20);
