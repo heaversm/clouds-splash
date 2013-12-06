@@ -36,10 +36,10 @@
     line1Color: [109, 186, 202],
     line2Color: [35,113,130],
     line3Color: [97,207,230],
-    line1Opacity: .15,
-    line2Opacity: .15,
+    line1Opacity: .08,
+    line2Opacity: .14,
     line3Opacity: .15,
-    updateLineLength: function(){ onUpdateLineLength(); }
+    //updateLineLength: function(){ onUpdateLineLength(); }
   }
 
   var camControls = [];
@@ -209,8 +209,8 @@
       lineControls[3] = folderLines.addColor(lineVars,"line1Color");
       lineControls[4] = folderLines.addColor(lineVars,"line2Color");
       lineControls[5] = folderLines.addColor(lineVars,"line3Color");
-      lineControls[6] = folderLines.add(lineVars,"lineEveryXParticles",30,200).step(1);
-      lineControls[7] = folderLines.add(lineVars,"updateLineLength");
+      //lineControls[6] = folderLines.add(lineVars,"lineEveryXParticles",30,200).step(1);
+      //lineControls[7] = folderLines.add(lineVars,"updateLineLength");
 
 
       addControlListeners();
